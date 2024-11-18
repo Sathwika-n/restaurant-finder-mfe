@@ -1,0 +1,51 @@
+.about-container {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  line-height: 1.6;
+  font-family: "Arial", sans-serif;
+}
+
+h1,
+h2 {
+  text-align: center;
+  color: #fc7b6b;
+}
+
+p {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+}
+
+ul li {
+  margin-bottom: 0.5rem;
+}
+
+strong {
+  color: #333;
+}
+
+.what-we-offer,
+.our-mission,
+.why-choose-us,
+.join-us {
+  margin-bottom: 2rem;
+}
+
+h2 {
+  margin-top: 2rem;
+  font-size: 1.5rem;
+  color: #fc7b6b;
+}
+
+.join-us p {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #333;
+}

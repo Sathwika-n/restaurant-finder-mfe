@@ -1,0 +1,69 @@
+/* Global padding and margin reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.search-container {
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 1376px; /* Maximum width for larger screens */
+  width: 100%;
+}
+
+.restaurant-card-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 0 10px;
+}
+
+/* Add gap between the cards */
+.slick-slide {
+  padding: 10px; /* Adds space between cards */
+}
+
+/* Customize pagination dots */
+.slick-dots {
+  bottom: -30px; /* Position the dots lower */
+}
+
+.slick-prev,
+.slick-next {
+  color: #000; /* Arrow color */
+  font-size: 20px;
+}
+
+/* Ensure slick arrows are styled */
+.slick-prev:before,
+.slick-next:before {
+  font-size: 30px;
+  color: #000; /* Customize color of arrows */
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .restaurant-card-wrapper {
+    padding: 0 5px; /* Reduce the gap between cards on smaller screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .restaurant-card-wrapper {
+    padding: 0 5px;
+  }
+
+  .slick-dots li button:before {
+    font-size: 12px; /* Adjust dots size for mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .restaurant-card-wrapper {
+    padding: 0 3px;
+  }
+
+  .slick-dots li button:before {
+    font-size: 10px; /* Further adjust dots size for smaller mobile screens */
+  }
+}
