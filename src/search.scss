@@ -6,17 +6,54 @@
 }
 
 .search-container {
-  padding: 20px;
-  margin: 0 auto;
-  max-width: 1376px; /* Maximum width for larger screens */
-  width: 100%;
+  // padding: 20px;
+  // margin: 0 auto;
+  // max-width: 1376px; /* Maximum width for larger screens */
+  // width: 100%;
+  background: #ecffc1;
+  background: -webkit-linear-gradient(
+    0deg,
+    #ecffc1 0%,
+    #ffe6cc 50%,
+    #dfbaf7 100%
+  );
+  background: linear-gradient(0deg, #ecffc1 0%, #ffe6cc 50%, #dfbaf7 100%);
+  width: 100vw;
+  // height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .search-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    .fields {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .radius {
+      width: 100%;
+      max-width: 400px;
+    }
+  }
+  .restaurants-list {
+    width: 80%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    // gap: 2rem;
+  }
 }
 
-.restaurant-card-wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 0 10px;
-}
+// .restaurant-card-wrapper {
+//   display: flex;
+//   justify-content: center;
+//   padding: 0 10px;
+// }
 
 /* Add gap between the cards */
 .slick-slide {

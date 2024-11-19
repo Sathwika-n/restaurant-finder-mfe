@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { reverseGeocode, searchRestaurants } from "./services/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import mockdata from "./mockdata.json";
 import RestaurantCard from "./RestaurantCard";
 import Slider from "react-slick";
@@ -67,7 +68,7 @@ function Search() {
       }));
     },
     onError: (error) => {
-      console.error("Mutation failed!", error?.response?.data?.detail);
+      console.error("Mutation failed!", error);
       setLocationError(error?.response?.data?.detail);
       setIsLocationLoading(false);
     },
@@ -117,74 +118,143 @@ function Search() {
       alert("Geolocation is not supported by your browser.");
     }
   };
-
   return (
-    <Box className="search-container" sx={{ maxWidth: "1400px" }}>
-      <Box sx={{ display: "flex" }}>
-        <TextField
-          required
-          name="location"
-          type="text"
-          placeholder="Your Location"
-          value={searchData?.location || ""}
-          onChange={handleSearchInputChange}
-          margin="normal"
-        />
-        {/* <Button variant="contained" onClick={handleGetCurrentLocation}> */}
-        {isLocationLoading ? (
+    <Box className="search-container">
+      <Box className="search-form">
+        <Typography variant="subHeading">Start Exploring</Typography>
+        <Box className="fields">
+          <TextField
+            required
+            name="location"
+            type="text"
+            placeholder="Your Location"
+            value={searchData?.location || ""}
+            onChange={handleSearchInputChange}
+            margin="normal"
+          />
+          {isLocationLoading ? (
+            <Loader />
+          ) : (
+            <MyLocationIcon
+              onClick={handleGetCurrentLocation}
+              sx={{ cursor: "pointer" }}
+            />
+          )}
+        </Box>
+
+        <Box className="radius">
+          <Slider2
+            value={searchData?.radius} // Bind the state to the slider value
+            onChange={handleSliderChange} // Update state on slider value change
+            defaultValue={50} // Initial value
+            valueLabelDisplay="auto" // Show the value on the slider
+            min={0} // Set min value
+            max={1000} // Set max value
+            aria-label="Slider"
+          />
+        </Box>
+        {isLoading ? (
           <Loader />
         ) : (
-          <MyLocationIcon
-            onClick={handleGetCurrentLocation}
-            sx={{ cursor: "pointer" }}
-          />
+          <Button variant="signUp" onClick={handleSearch}>
+            Explore
+          </Button>
         )}
-
-        {/* </Button> */}
-        {/* {formErrors.email && (
-          <FormHelperText error sx={{ marginLeft: 2, fontStyle: "DM Sans" }}>
-            {formErrors.email}
-          </FormHelperText>
-        )} */}
       </Box>
-      <Box>
-        <Slider2
-          value={searchData?.radius} // Bind the state to the slider value
-          onChange={handleSliderChange} // Update state on slider value change
-          defaultValue={50} // Initial value
-          valueLabelDisplay="auto" // Show the value on the slider
-          min={0} // Set min value
-          max={1000} // Set max value
-          aria-label="Slider"
-        />
-      </Box>
-
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <Button variant="signUp" onClick={handleSearch}>
-          Explore
-        </Button>
-      )}
-
       {data?.length > 0 ? (
-        <Slider {...settings} className="slider">
+        <Grid container spacing={2} className="restaurants-list">
           {data?.map((restaurant, index) => (
-            <Box key={index} className="restaurant-card-wrapper">
+            <Grid
+              item
+              size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+              key={index}
+              className="restaurant-card-wrapper"
+            >
               <RestaurantCard
                 name={restaurant.name}
-                imageUrl={restaurant.photo_url}
+                imageUrl={
+                  restaurant.photo_url || "https://placehold.co/300x300"
+                }
                 rating={restaurant.rating}
                 location={restaurant.address}
               />
-            </Box>
+            </Grid>
           ))}
-        </Slider>
+        </Grid>
       ) : (
-        <Typography variant="haveAccount"> No Restaurants Found.</Typography>
+        <Typography variant="haveAccount">No Restaurants Found.</Typography>
       )}
     </Box>
   );
+
+  // return (
+  //   <Box className="search-container" sx={{ maxWidth: "1400px" }}>
+
+  //     <Box sx={{ display: "flex" }}>
+  //       <TextField
+  //         required
+  //         name="location"
+  //         type="text"
+  //         placeholder="Your Location"
+  //         value={searchData?.location || ""}
+  //         onChange={handleSearchInputChange}
+  //         margin="normal"
+  //       />
+  //       {/* <Button variant="contained" onClick={handleGetCurrentLocation}> */}
+  //       {isLocationLoading ? (
+  //         <Loader />
+  //       ) : (
+  //         <MyLocationIcon
+  //           onClick={handleGetCurrentLocation}
+  //           sx={{ cursor: "pointer" }}
+  //         />
+  //       )}
+
+  //       {/* </Button> */}
+  //       {/* {formErrors.email && (
+  //         <FormHelperText error sx={{ marginLeft: 2, fontStyle: "DM Sans" }}>
+  //           {formErrors.email}
+  //         </FormHelperText>
+  //       )} */}
+  //     </Box>
+  //     <Box>
+  //       <Slider2
+  //         value={searchData?.radius} // Bind the state to the slider value
+  //         onChange={handleSliderChange} // Update state on slider value change
+  //         defaultValue={50} // Initial value
+  //         valueLabelDisplay="auto" // Show the value on the slider
+  //         min={0} // Set min value
+  //         max={1000} // Set max value
+  //         aria-label="Slider"
+  //       />
+  //     </Box>
+
+  //     {isLoading ? (
+  //       <Loader />
+  //     ) : (
+  //       <Button variant="signUp" onClick={handleSearch}>
+  //         Explore
+  //       </Button>
+  //     )}
+
+  //     {data?.length > 0 ? (
+  //       <Slider {...settings} className="slider">
+  //         {data?.map((restaurant, index) => (
+  //           <Box key={index} className="restaurant-card-wrapper">
+  //             <RestaurantCard
+  //               name={restaurant.name}
+  //               imageUrl={restaurant.photo_url}
+  //               rating={restaurant.rating}
+  //               location={restaurant.address}
+  //             />
+  //           </Box>
+  //         ))}
+  //       </Slider>
+  //     ) : (
+  //       <Typography variant="haveAccount"> No Restaurants Found.</Typography>
+  //     )}
+  //   </Box>
+  // );
 }
 
 export default Search;
