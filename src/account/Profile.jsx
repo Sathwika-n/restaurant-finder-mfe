@@ -1,16 +1,33 @@
 import React, { useState } from "react";
 import "./profile.scss";
-import {
-  Box,
-  Button,
-  FormHelperText,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import RestaurantCard from "../RestaurantCard";
+import { useUserFavourites, useUserReviews } from "../services/api";
+import ReviewCard from "../ReviewCard";
+import Loader from "../Loader";
+import { parseISO, formatDistanceToNow } from "date-fns";
 
 const Profile = () => {
+  const userId = "f295f193-42ac-4fff-b495-4f29dc634386";
+  const {
+    data: reviewsData,
+    isLoading: isReviewsLoading,
+    error: isReviewsError,
+  } = useUserReviews(
+    userId
+    // sessionStorage.getItem(JSON.parse(sessionStorage.getItem("user")).user_id)
+  );
+
+  const {
+    data: favouritesData,
+    isLoading: isFavouritesLoading,
+    error: isFavouritesError,
+  } = useUserFavourites(
+    userId
+    // sessionStorage.getItem(JSON.parse(sessionStorage.getItem("user")).user_id)
+  );
+
   // State for the form fields
   const [formData, setFormData] = useState({
     oldPassword: "",
@@ -25,56 +42,7 @@ const Profile = () => {
     confirmPassword: "",
   });
 
-  const handleChangePassword = () => {
-    let isValid = true;
-    const errors = {
-      oldPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    };
-
-    if (!formData?.oldPassword) {
-      errors.oldPassword = "Old Password is required";
-      isValid = false;
-    }
-    if (!formData?.newPassword) {
-      errors.newPassword = "New Password is required";
-      isValid = false;
-    }
-    if (!formData?.confirmPassword) {
-      errors.confirmPassword = "Confirm Password is required";
-      isValid = false;
-    }
-
-    // Check password length
-    if (formData?.newPassword && formData?.newPassword.length < 8) {
-      errors.newPassword = "Password must be at least 8 characters";
-      isValid = false;
-    }
-
-    // Check if passwords match
-    if (formData?.newPassword !== formData?.confirmPassword) {
-      errors.confirmPassword = "Confirm Password does not match New Password";
-      isValid = false;
-    }
-
-    setFormErrors(errors);
-
-    if (!isValid) {
-      //   setIsLoading(false);
-      return;
-    }
-    console.log(formData);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
-  };
-
+  // Utility function for title casing
   function toTitleCase(text) {
     return text
       .toLowerCase()
@@ -83,6 +51,8 @@ const Profile = () => {
       .join(" ");
   }
 
+  // UI for loading and error states
+  // Main content
   return (
     <Box className="profile-content">
       <Box className="profile-title">
@@ -92,9 +62,6 @@ const Profile = () => {
       </Box>
       <Box className="profile-details-container">
         <Box className="profile-details">
-          {/* <Typography variant="category" color="#004687">
-            PROFILE DETAILS
-          </Typography> */}
           <Box className="profile">
             <Typography variant="boldHaveAccount">Full Name:</Typography>
             <Typography variant="cardTitle">
@@ -117,14 +84,31 @@ const Profile = () => {
             <Typography variant="category" color="#004687">
               FAVOURITES
             </Typography>
-            <Box>
-              <RestaurantCard
-                name="Spicy Kitchen"
-                imageUrl="https://placehold.co/300x300"
-                rating="4.4"
-                location="Shankar Vilas"
-              />
-            </Box>
+            {isFavouritesLoading ? (
+              <Loader />
+            ) : favouritesData?.length > 0 ? (
+              <Grid container spacing={2} className="restaurants-list">
+                {favouritesData?.map((restaurant, index) => (
+                  <Grid
+                    item
+                    size={{ xs: 12, sm: 12, md: 12, lg: 6 }}
+                    key={index}
+                    className="restaurant-card-wrapper"
+                  >
+                    <RestaurantCard
+                      name={restaurant.name}
+                      imageUrl={
+                        restaurant.image || "https://placehold.co/300x300"
+                      }
+                      rating={restaurant.rating}
+                      location={restaurant.location}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              <Typography variant="haveAccount">No Favourites</Typography>
+            )}
           </Box>
         </Grid>
         <Grid item size={{ xs: 6 }}>
@@ -132,14 +116,43 @@ const Profile = () => {
             <Typography variant="category" color="#004687">
               MY REVIEWS
             </Typography>
-            <Box>
-              <RestaurantCard
-                name="Spicy Kitchen"
-                imageUrl="https://placehold.co/300x300"
-                rating="4.4"
-                location="Shankar Vilas"
-              />
-            </Box>
+            {isReviewsLoading ? (
+              <Loader />
+            ) : reviewsData?.length > 0 ? (
+              <Grid container spacing={1} className="grid">
+                {reviewsData?.map((restaurant, index) => (
+                  <Grid
+                    item
+                    size={{ xs: 12, sm: 12, md: 12, lg: 6 }}
+                    key={index}
+                  >
+                    <ReviewCard
+                      key={index}
+                      name={restaurant.restaurant_name}
+                      rating={restaurant.rating}
+                      location={restaurant.restaurant_address}
+                      review={restaurant.review_text}
+                      time={formatDistanceToNow(
+                        parseISO(restaurant.created_at),
+                        {
+                          addSuffix: true,
+                        }
+                      )}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Typography variant="haveAccount">No Reviews</Typography>
+              </Box>
+            )}
           </Box>
         </Grid>
       </Grid>

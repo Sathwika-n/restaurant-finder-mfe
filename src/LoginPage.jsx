@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google"; // Import GoogleOAuthProvider
 import "./login.scss";
 import logo from "../public/vite.svg";
-import { loginUser, signupUser } from "./services/api";
+import { forgotPassword, loginUser, signupUser } from "./services/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Loader from "./Loader";
 import "./loader.scss";
@@ -22,6 +22,9 @@ const clientId = "YOUR_GOOGLE_CLIENT_ID"; // Replace with your Google Client ID
 
 function LoginPage({ setIsLoggedIn }) {
   const [isSignUp, setIsSignUp] = useState(true); // Toggle between login and signup
+  const [isforgotPassword, setIsforgotPassword] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpRecieved, setOtpRecieved] = useState("");
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -76,6 +79,21 @@ function LoginPage({ setIsLoggedIn }) {
       console.error("Mutation failed!", error?.response?.data?.detail);
       setMutationError(error?.response?.data?.detail);
       setIsLoading(false);
+    },
+  });
+
+  const forgotMutation = useMutation({
+    mutationFn: forgotPassword,
+    onSuccess: (data) => {
+      console.log("Mutation succeeded!", data);
+      setIsLoading(false);
+      setOtpSent(true);
+    },
+    onError: (error) => {
+      console.error("Mutation failed!", error?.response?.data?.detail);
+      setMutationError(error?.response?.data?.detail);
+      setIsLoading(false);
+      setOtpSent(false);
     },
   });
 
@@ -207,9 +225,44 @@ function LoginPage({ setIsLoggedIn }) {
     });
   };
 
+  const handleSendOtp = () => {
+    setIsLoading(true);
+    setMutationError(null);
+
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData?.email)) {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        email: "Please enter a valid email address.",
+      }));
+      setIsLoading(false);
+      return;
+    }
+    // If no errors, clear the error messages
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      email: "",
+      password: "",
+    }));
+
+    // Proceed with the login mutation
+    forgotMutation.mutate({
+      email: formData?.email,
+    });
+  };
+
   // Handle Toggle Between Login and Sign-Up
   const toggleAuthMode = () => {
     setIsSignUp(!isSignUp);
+    setIsforgotPassword(false);
+  };
+  const toggleForgotMode = () => {
+    setIsforgotPassword(!isforgotPassword);
+  };
+  const toggleSignIn = () => {
+    setIsSignUp(false);
+    setIsforgotPassword(false);
   };
 
   const handleInputChange = (e) => {
@@ -237,6 +290,13 @@ function LoginPage({ setIsLoggedIn }) {
     }));
   };
 
+  const handleOtpInputChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "otp") {
+      setOtpRecieved(value);
+    }
+  };
   const handleLoginInputChange = (e) => {
     const { name, value } = e.target;
 
@@ -296,9 +356,15 @@ function LoginPage({ setIsLoggedIn }) {
               justifyContent: "center",
             }}
           >
-            <Typography variant="columnHeading" color="#004687">
-              {isSignUp ? "Sign up" : "Sign in"} to Eats Near You
-            </Typography>
+            {isforgotPassword ? (
+              <Typography variant="columnHeading" color="#004687">
+                Reset Password to Eats Near You
+              </Typography>
+            ) : (
+              <Typography variant="columnHeading" color="#004687">
+                {isSignUp ? "Sign up" : "Sign in"} to Eats Near You
+              </Typography>
+            )}
             <Box className="content-box">
               <Box className="form-content">
                 <Box className="text-fields">
@@ -385,6 +451,49 @@ function LoginPage({ setIsLoggedIn }) {
                         )}
                       </Box>
                     </>
+                  ) : isforgotPassword ? (
+                    <>
+                      <Box>
+                        <TextField
+                          required
+                          name="email"
+                          type="email"
+                          placeholder="Your Email Address"
+                          value={formData?.email || ""}
+                          onChange={handleLoginInputChange}
+                          margin="normal"
+                        />
+                        {formErrors.email && (
+                          <FormHelperText
+                            error
+                            sx={{ marginLeft: 2, fontStyle: "DM Sans" }}
+                          >
+                            {formErrors.email}
+                          </FormHelperText>
+                        )}
+                      </Box>
+                      {otpSent && (
+                        <Box>
+                          <TextField
+                            required
+                            name="otp"
+                            type="text"
+                            placeholder="OTP Recieved on Email"
+                            value={otpRecieved || ""}
+                            onChange={handleOtpInputChange}
+                            margin="normal"
+                          />
+                          {formErrors.email && (
+                            <FormHelperText
+                              error
+                              sx={{ marginLeft: 2, fontStyle: "DM Sans" }}
+                            >
+                              {formErrors.email}
+                            </FormHelperText>
+                          )}
+                        </Box>
+                      )}
+                    </>
                   ) : (
                     <>
                       {/* Email */}
@@ -429,26 +538,60 @@ function LoginPage({ setIsLoggedIn }) {
                     </>
                   )}
                 </Box>
-
-                {isLoading ? (
-                  <Loader />
-                ) : isSignUp ? (
-                  <Button
-                    variant="signUp"
-                    sx={{
-                      "&:focus": {
-                        outline: "none",
-                      },
-                    }}
-                    onClick={handleManualSignup}
-                  >
-                    Sign Up
-                  </Button>
-                ) : (
-                  <Button variant="signUp" onClick={handleManualLogin}>
-                    Sign In
-                  </Button>
-                )}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  {isLoading ? (
+                    <Loader />
+                  ) : isSignUp ? (
+                    <Button
+                      variant="signUp"
+                      sx={{
+                        "&:focus": {
+                          outline: "none",
+                        },
+                      }}
+                      onClick={handleManualSignup}
+                    >
+                      Sign Up
+                    </Button>
+                  ) : isforgotPassword ? (
+                    otpSent ? (
+                      <Button variant="signUp">Change Password</Button>
+                    ) : (
+                      <Button variant="signUp" onClick={handleSendOtp}>
+                        Send OTP
+                      </Button>
+                    )
+                  ) : (
+                    <Button variant="signUp" onClick={handleManualLogin}>
+                      Sign In
+                    </Button>
+                  )}
+                  {!isSignUp &&
+                    (isforgotPassword ? (
+                      <Typography
+                        variant="haveAccount"
+                        onClick={toggleSignIn}
+                        sx={{ cursor: "pointer" }}
+                      >
+                        Go back to Sign In
+                      </Typography>
+                    ) : (
+                      <Typography
+                        variant="haveAccount"
+                        onClick={toggleForgotMode}
+                        sx={{ cursor: "pointer" }}
+                      >
+                        Forgot Password?
+                      </Typography>
+                    ))}
+                </Box>
 
                 <GoogleLogin
                   clientId={clientId}
