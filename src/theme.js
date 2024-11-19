@@ -42,6 +42,14 @@ const theme = createTheme({
           fontSize: "15px",
           fontWeight: "500",
         },
+        reviewTitle: {
+          fontSize: "18px",
+          fontWeight: "900",
+        },
+        reviewContent: {
+          fontSize: "14px",
+          fontWeight: "500",
+        },
       },
     },
     MuiAppBar: {
