@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./contact.scss";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -28,7 +28,7 @@ const ContactUs = () => {
   return (
     <Box className="contact-container">
       <Typography variant="title">Contact Us</Typography>
-      <Typography variant="reviewContent">
+      <Typography variant="body">
         We're here to help you find the perfect dining experience! Whether you
         have a question, feedback, or a suggestion to improve our service, we'd
         love to hear from you.
@@ -37,62 +37,61 @@ const ContactUs = () => {
       <Box className="contact-info">
         <Typography variant="columnHeading">Get in Touch</Typography>
         <Box>
-          <Typography>
+          <Typography variant="body">
             <strong>Email:</strong> support@eatsnearyou.com
           </Typography>
         </Box>
         <Box>
-          <Typography>
+          <Typography variant="body">
             <strong>Phone:</strong> +123 456 7890
           </Typography>
         </Box>
         <Box>
-          <Typography>
-            <strong>Business Hours:</strong> Monday – Friday, 9:00 AM to 6:00 PM
+          <Typography variant="body">
+            <strong>Business Hours:</strong> Monday - Friday, 9:00 AM to 6:00 PM
           </Typography>
         </Box>
       </Box>
 
       <Box className="feedback">
-        <h2>Have a Suggestion?</h2>
-        <Box>
+        <Typography variant="columnHeading">Have a Suggestion?</Typography>
+        <Typography variant="body">
           Is there a feature you'd like to see or a restaurant you'd like us to
           add? Let us know through our feedback form.
-        </Box>
+        </Typography>
 
-        <Box>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Box>
-            <label htmlFor="name">Your Name</label>
-            <input
-              type="text"
-              id="name"
+            <TextField
+              required
               name="name"
-              value={formData.name}
+              type="text"
+              placeholder="Your Name"
+              value={formData?.name}
               onChange={handleChange}
-              required
+              margin="normal"
             />
           </Box>
-
           <Box>
-            <label htmlFor="email">Your Email</label>
-            <input
-              type="email"
-              id="email"
+            <TextField
+              required
               name="email"
-              value={formData.email}
+              type="email"
+              placeholder="Your Email"
+              value={formData?.email}
               onChange={handleChange}
-              required
+              margin="normal"
             />
           </Box>
-
           <Box>
-            <label htmlFor="message">Your Message</label>
-            <textarea
-              id="message"
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
+            <TextField
               required
+              name="message"
+              type="text"
+              placeholder="Your Message"
+              value={formData?.message}
+              onChange={handleChange}
+              margin="normal"
             />
           </Box>
 
@@ -103,10 +102,8 @@ const ContactUs = () => {
       </Box>
 
       <Box className="social-media">
-        <Typography variant="columnHeading">
-          Follow Us for the Latest Updates
-        </Typography>
-        <Typography variant="columnHeading">
+        <Typography variant="body">Follow Us for the Latest Updates</Typography>
+        <Typography variant="body">
           Stay connected for dining tips and more:
         </Typography>
         <Box className="social-links">
@@ -135,7 +132,7 @@ const ContactUs = () => {
       </Box>
 
       <Box className="response-time">
-        <Typography>
+        <Typography variant="body">
           We strive to respond to all inquiries within 24 hours. Thank you for
           being part of our community!
         </Typography>

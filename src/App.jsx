@@ -12,6 +12,7 @@ import HomePage from "./HomePage";
 import LoginPage from "./LoginPage";
 import Profile from "./account/Profile";
 import ChangePassword from "./account/ChangePassword";
+import RestaurantDetail from "./RestaurantDetail";
 
 function App() {
   const location = useLocation();
@@ -58,6 +59,10 @@ function App() {
         <Route
           path="/changePassword"
           element={isLoggedIn ? <ChangePassword /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/restaurantDetail"
+          element={isLoggedIn ? <RestaurantDetail /> : <Navigate to="/" />}
         />
       </Routes>
     </Box>

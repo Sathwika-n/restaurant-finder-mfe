@@ -20,19 +20,59 @@
     align-items: center;
     justify-content: center;
     gap: 1rem;
+    margin: 1rem;
+    .text-class {
+      font-size: 5rem;
+    }
+    @media (max-width: 768px) {
+      .text-class {
+        font-size: 4rem;
+      }
+    }
+    .button-class {
+      width: 120px;
+      height: 50px;
+      font-size: 18px;
+    }
     .form-data {
+      width: 100%;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      // align-items: flex-start;/
       gap: 2rem;
       .fields {
         display: flex;
         align-items: center;
         gap: 1rem;
+
+        .location-icon {
+          cursor: "pointer";
+          font-size: 35px;
+        }
+        @media (max-width: 768px) {
+          .location-icon {
+            cursor: "pointer";
+            font-size: 25px;
+          }
+        }
+
+        .textfield-class {
+          width: 100%;
+          height: 3.5rem;
+          display: flex;
+          justify-content: center;
+        }
+        @media (max-width: 768px) {
+          .textfield-class {
+            height: 3rem;
+          }
+        }
       }
       .radius {
         display: flex;
-        gap: 2rem;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
         width: 100%;
         // max-width: 400px;
       }

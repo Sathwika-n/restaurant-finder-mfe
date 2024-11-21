@@ -58,6 +58,10 @@ const fetchUserFavourites = async (userId) => {
   const response = await api.get(`/maps/user_favorites/${userId}`);
   return response.data;
 };
+const fetchRestaurantDetails = async (restaurantId) => {
+  const response = await api.get(`/maps/restaurant_details/${restaurantId}`);
+  return response.data;
+};
 
 // Use the `useQuery` hook
 export const useUserReviews = (userId) => {
@@ -74,6 +78,14 @@ export const useUserFavourites = (userId) => {
     queryFn: () => fetchUserFavourites(userId),
     enabled: !!userId, // Ensures query runs only when `userId` is provided
     staleTime: 300000, // (Optional) Keep data fresh for 5 minutes
+  });
+};
+export const useRestaurantDetails = (restaurantId) => {
+  return useQuery({
+    queryKey: ["restaurantDetails", restaurantId],
+    queryFn: () => fetchRestaurantDetails(restaurantId),
+    enabled: !!restaurantId,
+    staleTime: 300000,
   });
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa"; // Icons for rating and location
 import "./restaurant-card.scss"; // CSS for styling the card
 import { Box, IconButton, Typography } from "@mui/material";
@@ -7,6 +7,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useMutation } from "@tanstack/react-query";
 import { addFavorite, removeFavorite } from "./services/api";
 import { useQueryClient } from "@tanstack/react-query";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const RestaurantCard = ({
   name,
@@ -17,6 +18,14 @@ const RestaurantCard = ({
   isFavorite,
 }) => {
   const queryClient = useQueryClient();
+  const locationR = useLocation();
+  const navigate = useNavigate();
+  const [isFavoriteCard, setIsFavoriteCard] = useState(isFavorite);
+  useEffect(() => {
+    if (locationR.pathname === "/profile") {
+      setIsFavoriteCard(true);
+    }
+  });
   function toTitleCase(text) {
     return text
       ?.toLowerCase()
@@ -46,12 +55,12 @@ const RestaurantCard = ({
   });
 
   const handleFavoriteToggle = () => {
-    if (isFavorite) {
+    if (isFavoriteCard) {
       removeMutation.mutate({
         user_id: JSON.parse(sessionStorage.getItem("user")).user_id,
         restaurant_id: restaurant_id,
       });
-    } else if (!isFavorite) {
+    } else if (!isFavoriteCard) {
       addMutation.mutate({
         user_id: JSON.parse(sessionStorage.getItem("user"))?.user_id,
         restaurant_id: restaurant_id,
@@ -61,7 +70,14 @@ const RestaurantCard = ({
     // setIsFavorited((prev) => !prev);
   };
   return (
-    <Box className="restaurant-card">
+    <Box
+      className="restaurant-card"
+      onClick={() => {
+        navigate("/restaurantDetail", {
+          state: { restaurant_id: restaurant_id },
+        });
+      }}
+    >
       {/* Image Section */}
       <img src={imageUrl} alt={`${name}`} className="restaurant-image" />
 
@@ -71,17 +87,17 @@ const RestaurantCard = ({
           position: "absolute",
           top: "16px",
           right: "16px",
-          backgroundColor: isFavorite ? "#fc7b6b" : "#e0e0e0",
-          color: isFavorite ? "#fff" : "#000",
+          backgroundColor: isFavoriteCard ? "#fc7b6b" : "#e0e0e0",
+          color: isFavoriteCard ? "#fff" : "#000",
           "&:hover": {
-            backgroundColor: isFavorite ? "#e25445" : "#d0d0d0",
+            backgroundColor: isFavoriteCard ? "#e25445" : "#d0d0d0",
           },
           "&:focus": {
             outline: "none",
           },
         }}
       >
-        {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+        {isFavoriteCard ? <FavoriteIcon /> : <FavoriteBorderIcon />}
       </IconButton>
       {/* Details Section */}
       <Box className="restaurant-details" sx={{ position: "relative" }}>

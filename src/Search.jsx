@@ -19,7 +19,10 @@ function Search() {
   const [data, setData] = useState(null);
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
-  const [searchData, setSearchData] = useState({ location: "", radius: "0" });
+  const [searchData, setSearchData] = useState({
+    location: "Hyderabad",
+    radius: "150",
+  });
 
   const settings = {
     dots: true, // Pagination dots below slider
@@ -122,11 +125,13 @@ function Search() {
   return (
     <Box className="search-container">
       <Box className="search-form">
-        <Typography variant="title">Start Exploring</Typography>
+        <Typography variant="title" className="text-class">
+          Start Exploring
+        </Typography>
         <Box className="form-data">
           <Box className="fields">
             <TextField
-              sx={{ width: "36rem" }}
+              className="textfield-class"
               required
               name="location"
               type="text"
@@ -140,28 +145,37 @@ function Search() {
             ) : (
               <MyLocationIcon
                 onClick={handleGetCurrentLocation}
-                sx={{ cursor: "pointer" }}
+                className="location-icon"
               />
             )}
           </Box>
 
           <Box className="radius">
-            <Typography variant="reviewTitle">Radius:</Typography>
+            <Typography variant="body" sx={{ textAlign: "center" }}>
+              Select the radius below to find nearby restaurants
+            </Typography>
             <Slider2
               value={searchData?.radius} // Bind the state to the slider value
               onChange={handleSliderChange} // Update state on slider value change
-              defaultValue={50} // Initial value
+              defaultValue={searchData?.radius} // Initial value
               valueLabelDisplay="auto" // Show the value on the slider
               min={0} // Set min value
               max={1000} // Set max value
               aria-label="Slider"
+              sx={{
+                color: "#f50159",
+              }}
             />
           </Box>
         </Box>
         {isLoading ? (
           <Loader />
         ) : (
-          <Button variant="contained" onClick={handleSearch}>
+          <Button
+            variant="contained"
+            className="button-class"
+            onClick={handleSearch}
+          >
             Explore
           </Button>
         )}

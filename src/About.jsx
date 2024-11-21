@@ -24,7 +24,7 @@ const AboutUs = () => {
       </Box>
 
       <Box className="what-we-offer">
-        <Typography variant="title">What We Offer</Typography>
+        <Typography variant="columnHeading">What We Offer</Typography>
         <Box className="offers">
           <Typography variant="body">
             <strong>Personalized Recommendations:</strong> Use our search

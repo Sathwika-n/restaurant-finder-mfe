@@ -9,7 +9,7 @@ import Loader from "../Loader";
 import { parseISO, formatDistanceToNow } from "date-fns";
 
 const Profile = () => {
-  const userId = "f295f193-42ac-4fff-b495-4f29dc634386";
+  // const userId = "f295f193-42ac-4fff-b495-4f29dc634386";
   const {
     data: reviewsData,
     isLoading: isReviewsLoading,
@@ -79,7 +79,7 @@ const Profile = () => {
         </Box>
       </Box>
       <Grid container className="tabs">
-        <Grid item size={{ xs: 6 }}>
+        <Grid item size={{ xs: 12, sm: 6 }}>
           <Box className="favourites">
             <Typography variant="category" color="#004687">
               FAVOURITES
@@ -112,7 +112,7 @@ const Profile = () => {
             )}
           </Box>
         </Grid>
-        <Grid item size={{ xs: 6 }}>
+        <Grid item size={{ xs: 12, sm: 6 }}>
           <Box className="my-reviews">
             <Typography variant="category" color="#004687">
               MY REVIEWS
