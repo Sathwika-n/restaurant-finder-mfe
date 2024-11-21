@@ -33,12 +33,18 @@ jobs:
           npm run build --if-present
           npm test --if-present
 
+      # Debug: List files in the root and build directories
+      - name: List Files
+        run: ls -la
+      - name: List Build Directory
+        run: ls -la ./build
+
       # Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: ./build
+          package: ./build # Update this path if needed
           publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
 
       # Azure logout (optional for security)
