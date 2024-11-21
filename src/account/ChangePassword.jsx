@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import "./change-password.scss";
 import {
+  Alert,
   Box,
   Button,
   FormHelperText,
   TextField,
   Typography,
 } from "@mui/material";
+import { useMutation } from "@tanstack/react-query";
+import { changePassword } from "../services/api";
+import Loader from "../Loader";
 
 const ChangePassword = () => {
   // State for the form fields
@@ -22,8 +26,38 @@ const ChangePassword = () => {
     newPassword: "",
     confirmPassword: "",
   });
+  const [mutationResponse, setMutationResponse] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [mutationState, setMutationState] = useState("");
+
+  const changePasswordMutation = useMutation({
+    mutationFn: changePassword,
+    onSuccess: (data) => {
+      console.log("Mutation succeeded!", data);
+      setMutationResponse(data?.message);
+      setIsLoading(false);
+      setFormData({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setMutationState("success");
+    },
+    onError: (error) => {
+      console.error("Mutation failed!", error);
+      setMutationResponse(error?.response?.data?.detail);
+      setIsLoading(false);
+      setFormData({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setMutationState("error");
+    },
+  });
 
   const handleChangePassword = () => {
+    setIsLoading(true);
     let isValid = true;
     const errors = {
       oldPassword: "",
@@ -59,9 +93,16 @@ const ChangePassword = () => {
     setFormErrors(errors);
 
     if (!isValid) {
-      //   setIsLoading(false);
+      setIsLoading(false);
       return;
     }
+
+    changePasswordMutation.mutate({
+      old_password: formData?.oldPassword,
+      email: JSON.parse(sessionStorage.getItem("user"))?.email,
+      new_password: formData?.newPassword,
+    });
+
     console.log(formData);
   };
 
@@ -90,7 +131,7 @@ const ChangePassword = () => {
         <Box className="change-password-form">
           <Box>
             <Typography variant="h6">
-              {toTitleCase(JSON.parse(sessionStorage.getItem("user")).email)}
+              {toTitleCase(JSON.parse(sessionStorage.getItem("user"))?.email)}
             </Typography>
           </Box>
 
@@ -153,10 +194,16 @@ const ChangePassword = () => {
               </FormHelperText>
             )}
           </Box>
-
-          <Button variant="regular" onClick={handleChangePassword}>
-            Change Password
-          </Button>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <Button variant="regular" onClick={handleChangePassword}>
+              Change Password
+            </Button>
+          )}
+          {mutationResponse && (
+            <Alert severity={mutationState}>{mutationResponse}</Alert>
+          )}
         </Box>
       </Box>
     </Box>

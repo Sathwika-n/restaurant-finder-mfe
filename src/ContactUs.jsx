@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import "./contact.scss";
+import { Box, Button, Typography } from "@mui/material";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -24,36 +26,42 @@ const ContactUs = () => {
   };
 
   return (
-    <div className="contact-container">
-      <h1>Contact Us</h1>
-      <p>
-        We’re here to help you find the perfect dining experience! Whether you
-        have a question, feedback, or a suggestion to improve our service, we’d
+    <Box className="contact-container">
+      <Typography variant="title">Contact Us</Typography>
+      <Typography variant="reviewContent">
+        We're here to help you find the perfect dining experience! Whether you
+        have a question, feedback, or a suggestion to improve our service, we'd
         love to hear from you.
-      </p>
+      </Typography>
 
-      <section className="contact-info">
-        <h2>Get in Touch</h2>
-        <p>
-          <strong>Email:</strong> support@eatsnearyou.com
-        </p>
-        <p>
-          <strong>Phone:</strong> +123 456 7890
-        </p>
-        <p>
-          <strong>Business Hours:</strong> Monday – Friday, 9:00 AM to 6:00 PM
-        </p>
-      </section>
+      <Box className="contact-info">
+        <Typography variant="columnHeading">Get in Touch</Typography>
+        <Box>
+          <Typography>
+            <strong>Email:</strong> support@eatsnearyou.com
+          </Typography>
+        </Box>
+        <Box>
+          <Typography>
+            <strong>Phone:</strong> +123 456 7890
+          </Typography>
+        </Box>
+        <Box>
+          <Typography>
+            <strong>Business Hours:</strong> Monday – Friday, 9:00 AM to 6:00 PM
+          </Typography>
+        </Box>
+      </Box>
 
-      <section className="feedback">
+      <Box className="feedback">
         <h2>Have a Suggestion?</h2>
-        <p>
+        <Box>
           Is there a feature you'd like to see or a restaurant you'd like us to
           add? Let us know through our feedback form.
-        </p>
+        </Box>
 
-        <form onSubmit={handleSubmit}>
-          <div>
+        <Box>
+          <Box>
             <label htmlFor="name">Your Name</label>
             <input
               type="text"
@@ -63,9 +71,9 @@ const ContactUs = () => {
               onChange={handleChange}
               required
             />
-          </div>
+          </Box>
 
-          <div>
+          <Box>
             <label htmlFor="email">Your Email</label>
             <input
               type="email"
@@ -75,9 +83,9 @@ const ContactUs = () => {
               onChange={handleChange}
               required
             />
-          </div>
+          </Box>
 
-          <div>
+          <Box>
             <label htmlFor="message">Your Message</label>
             <textarea
               id="message"
@@ -86,16 +94,22 @@ const ContactUs = () => {
               onChange={handleChange}
               required
             />
-          </div>
+          </Box>
 
-          <button type="submit">Submit Feedback</button>
-        </form>
-      </section>
+          <Button variant="contained" onClick={handleSubmit}>
+            Submit Feedback
+          </Button>
+        </Box>
+      </Box>
 
-      <section className="social-media">
-        <h2>Follow Us for the Latest Updates</h2>
-        <p>Stay connected for dining tips and more:</p>
-        <div className="social-links">
+      <Box className="social-media">
+        <Typography variant="columnHeading">
+          Follow Us for the Latest Updates
+        </Typography>
+        <Typography variant="columnHeading">
+          Stay connected for dining tips and more:
+        </Typography>
+        <Box className="social-links">
           <a
             href="https://www.facebook.com/EatsNearYou"
             target="_blank"
@@ -117,16 +131,16 @@ const ContactUs = () => {
           >
             Twitter
           </a>
-        </div>
-      </section>
+        </Box>
+      </Box>
 
-      <section className="response-time">
-        <p>
+      <Box className="response-time">
+        <Typography>
           We strive to respond to all inquiries within 24 hours. Thank you for
           being part of our community!
-        </p>
-      </section>
-    </div>
+        </Typography>
+      </Box>
+    </Box>
   );
 };
 

@@ -13,7 +13,12 @@ import { useNavigate } from "react-router-dom";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google"; // Import GoogleOAuthProvider
 import "./login.scss";
 import logo from "../public/vite.svg";
-import { forgotPassword, loginUser, signupUser } from "./services/api";
+import {
+  changePassword,
+  forgotPassword,
+  loginUser,
+  signupUser,
+} from "./services/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Loader from "./Loader";
 import "./loader.scss";
@@ -39,8 +44,17 @@ function LoginPage({ setIsLoggedIn }) {
     email: "",
     confirmPassword: "",
   });
+  const [forgotData, setForgotData] = useState({
+    otp: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
 
-  const [mutationError, setMutationError] = useState(null);
+  const [otpSentEmail, setOtpSentEmail] = useState("");
+
+  const [mutationResponse, setMutationResponse] = useState(null);
+
+  const [mutationState, setMutationState] = useState("");
 
   const queryClient = useQueryClient();
 
@@ -48,7 +62,11 @@ function LoginPage({ setIsLoggedIn }) {
     mutationFn: signupUser,
     onSuccess: (data) => {
       console.log("Mutation succeeded!", data);
+      setMutationState("success");
+      setMutationResponse(data?.message);
       setIsSignUp(false);
+
+      console.log("isSignUp:", isSignUp);
       setIsLoading(false);
       setFormData({
         username: "",
@@ -58,8 +76,9 @@ function LoginPage({ setIsLoggedIn }) {
       });
     },
     onError: (error) => {
-      console.error("Mutation failed!", error?.response?.data?.detail);
-      setMutationError(error?.response?.data?.detail);
+      console.error("Mutation failed!", error);
+      setMutationState("error");
+      setMutationResponse(error?.response?.data?.detail);
       setIsLoading(false);
     },
   });
@@ -77,7 +96,7 @@ function LoginPage({ setIsLoggedIn }) {
     },
     onError: (error) => {
       console.error("Mutation failed!", error?.response?.data?.detail);
-      setMutationError(error?.response?.data?.detail);
+      setMutationResponse(error?.response?.data?.detail);
       setIsLoading(false);
     },
   });
@@ -91,9 +110,37 @@ function LoginPage({ setIsLoggedIn }) {
     },
     onError: (error) => {
       console.error("Mutation failed!", error?.response?.data?.detail);
-      setMutationError(error?.response?.data?.detail);
+      setMutationResponse(error?.response?.data?.detail);
       setIsLoading(false);
       setOtpSent(false);
+    },
+  });
+  const changePasswordMutation = useMutation({
+    mutationFn: changePassword,
+    onSuccess: (data) => {
+      console.log("Mutation succeeded!", data);
+      setMutationResponse(data?.message);
+      setIsLoading(false);
+      setForgotData({
+        otp: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setMutationState("success");
+      setIsSignUp(false);
+      setIsforgotPassword(false);
+      setOtpSent(false);
+    },
+    onError: (error) => {
+      console.error("Mutation failed!", error);
+      setMutationResponse(error?.response?.data?.detail);
+      setIsLoading(false);
+      setFormData({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setMutationState("error");
     },
   });
 
@@ -134,7 +181,7 @@ function LoginPage({ setIsLoggedIn }) {
 
   const handleManualSignup = () => {
     setIsLoading(true);
-    setMutationError(null);
+    setMutationResponse(null);
     let isValid = true;
     const errors = {
       username: "",
@@ -188,7 +235,7 @@ function LoginPage({ setIsLoggedIn }) {
   };
   const handleManualLogin = () => {
     setIsLoading(true);
-    setMutationError(null);
+    setMutationResponse(null);
 
     // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -227,7 +274,7 @@ function LoginPage({ setIsLoggedIn }) {
 
   const handleSendOtp = () => {
     setIsLoading(true);
-    setMutationError(null);
+    setMutationResponse(null);
 
     // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -245,10 +292,21 @@ function LoginPage({ setIsLoggedIn }) {
       email: "",
       password: "",
     }));
-
+    setOtpSentEmail(formData?.email);
     // Proceed with the login mutation
     forgotMutation.mutate({
       email: formData?.email,
+    });
+  };
+
+  const handleChangePassword = () => {
+    setIsLoading(true);
+    setMutationResponse(null);
+
+    changePasswordMutation.mutate({
+      old_password: forgotData?.otp,
+      email: otpSentEmail,
+      new_password: forgotData?.newPassword,
     });
   };
 
@@ -293,9 +351,10 @@ function LoginPage({ setIsLoggedIn }) {
   const handleOtpInputChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "otp") {
-      setOtpRecieved(value);
-    }
+    setForgotData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
   const handleLoginInputChange = (e) => {
     const { name, value } = e.target;
@@ -357,11 +416,11 @@ function LoginPage({ setIsLoggedIn }) {
             }}
           >
             {isforgotPassword ? (
-              <Typography variant="columnHeading" color="#004687">
+              <Typography variant="title" color="#004687">
                 Reset Password to Eats Near You
               </Typography>
             ) : (
-              <Typography variant="columnHeading" color="#004687">
+              <Typography variant="title" color="#004687">
                 {isSignUp ? "Sign up" : "Sign in"} to Eats Near You
               </Typography>
             )}
@@ -382,10 +441,7 @@ function LoginPage({ setIsLoggedIn }) {
                           margin="normal"
                         />
                         {formErrors.username && (
-                          <FormHelperText
-                            error
-                            sx={{ marginLeft: 2, fontStyle: "DM Sans" }}
-                          >
+                          <FormHelperText error sx={{ marginLeft: 2 }}>
                             {formErrors.username}
                           </FormHelperText>
                         )}
@@ -402,10 +458,7 @@ function LoginPage({ setIsLoggedIn }) {
                           margin="normal"
                         />
                         {formErrors.email && (
-                          <FormHelperText
-                            error
-                            sx={{ marginLeft: 2, fontStyle: "DM Sans" }}
-                          >
+                          <FormHelperText error sx={{ marginLeft: 2 }}>
                             {formErrors.email}
                           </FormHelperText>
                         )}
@@ -422,10 +475,7 @@ function LoginPage({ setIsLoggedIn }) {
                           margin="normal"
                         />
                         {formErrors.password && (
-                          <FormHelperText
-                            error
-                            sx={{ marginLeft: 2, fontStyle: "DM Sans" }}
-                          >
+                          <FormHelperText error sx={{ marginLeft: 2 }}>
                             {formErrors.password}
                           </FormHelperText>
                         )}
@@ -442,10 +492,7 @@ function LoginPage({ setIsLoggedIn }) {
                           margin="normal"
                         />
                         {formErrors.confirmPassword && (
-                          <FormHelperText
-                            error
-                            sx={{ marginLeft: 2, fontStyle: "DM Sans" }}
-                          >
+                          <FormHelperText error sx={{ marginLeft: 2 }}>
                             {formErrors.confirmPassword}
                           </FormHelperText>
                         )}
@@ -464,33 +511,67 @@ function LoginPage({ setIsLoggedIn }) {
                           margin="normal"
                         />
                         {formErrors.email && (
-                          <FormHelperText
-                            error
-                            sx={{ marginLeft: 2, fontStyle: "DM Sans" }}
-                          >
+                          <FormHelperText error sx={{ marginLeft: 2 }}>
                             {formErrors.email}
                           </FormHelperText>
                         )}
                       </Box>
                       {otpSent && (
-                        <Box>
-                          <TextField
-                            required
-                            name="otp"
-                            type="text"
-                            placeholder="OTP Recieved on Email"
-                            value={otpRecieved || ""}
-                            onChange={handleOtpInputChange}
-                            margin="normal"
-                          />
-                          {formErrors.email && (
-                            <FormHelperText
-                              error
-                              sx={{ marginLeft: 2, fontStyle: "DM Sans" }}
-                            >
-                              {formErrors.email}
-                            </FormHelperText>
-                          )}
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "1rem",
+                          }}
+                        >
+                          <Box>
+                            <TextField
+                              required
+                              name="otp"
+                              type="text"
+                              placeholder="OTP Recieved on Email"
+                              value={forgotData?.otp}
+                              onChange={handleOtpInputChange}
+                              margin="normal"
+                            />
+                            {formErrors.email && (
+                              <FormHelperText error sx={{ marginLeft: 2 }}>
+                                {formErrors.email}
+                              </FormHelperText>
+                            )}
+                          </Box>
+                          <Box>
+                            <TextField
+                              required
+                              name="newPassword"
+                              type="password"
+                              placeholder="New Password"
+                              value={forgotData?.newPassword}
+                              onChange={handleOtpInputChange}
+                              margin="normal"
+                            />
+                            {formErrors.email && (
+                              <FormHelperText error sx={{ marginLeft: 2 }}>
+                                {formErrors.email}
+                              </FormHelperText>
+                            )}
+                          </Box>
+                          <Box>
+                            <TextField
+                              required
+                              name="confirmPassword"
+                              type="password"
+                              placeholder="Confirm Password"
+                              value={forgotData?.confirmPassword}
+                              onChange={handleOtpInputChange}
+                              margin="normal"
+                            />
+                            {formErrors.email && (
+                              <FormHelperText error sx={{ marginLeft: 2 }}>
+                                {formErrors.email}
+                              </FormHelperText>
+                            )}
+                          </Box>
                         </Box>
                       )}
                     </>
@@ -508,10 +589,7 @@ function LoginPage({ setIsLoggedIn }) {
                           margin="normal"
                         />
                         {formErrors.email && (
-                          <FormHelperText
-                            error
-                            sx={{ marginLeft: 2, fontStyle: "DM Sans" }}
-                          >
+                          <FormHelperText error sx={{ marginLeft: 2 }}>
                             {formErrors.email}
                           </FormHelperText>
                         )}
@@ -527,10 +605,7 @@ function LoginPage({ setIsLoggedIn }) {
                           margin="normal"
                         />
                         {formErrors.password && (
-                          <FormHelperText
-                            error
-                            sx={{ marginLeft: 2, fontStyle: "DM Sans" }}
-                          >
+                          <FormHelperText error sx={{ marginLeft: 2 }}>
                             {formErrors.password}
                           </FormHelperText>
                         )}
@@ -550,7 +625,7 @@ function LoginPage({ setIsLoggedIn }) {
                     <Loader />
                   ) : isSignUp ? (
                     <Button
-                      variant="signUp"
+                      variant="contained"
                       sx={{
                         "&:focus": {
                           outline: "none",
@@ -562,21 +637,26 @@ function LoginPage({ setIsLoggedIn }) {
                     </Button>
                   ) : isforgotPassword ? (
                     otpSent ? (
-                      <Button variant="signUp">Change Password</Button>
+                      <Button
+                        variant="contained"
+                        onClick={handleChangePassword}
+                      >
+                        Change Password
+                      </Button>
                     ) : (
-                      <Button variant="signUp" onClick={handleSendOtp}>
+                      <Button variant="contained" onClick={handleSendOtp}>
                         Send OTP
                       </Button>
                     )
                   ) : (
-                    <Button variant="signUp" onClick={handleManualLogin}>
+                    <Button variant="contained" onClick={handleManualLogin}>
                       Sign In
                     </Button>
                   )}
                   {!isSignUp &&
                     (isforgotPassword ? (
                       <Typography
-                        variant="haveAccount"
+                        variant="clickableText"
                         onClick={toggleSignIn}
                         sx={{ cursor: "pointer" }}
                       >
@@ -584,7 +664,7 @@ function LoginPage({ setIsLoggedIn }) {
                       </Typography>
                     ) : (
                       <Typography
-                        variant="haveAccount"
+                        variant="clickableText"
                         onClick={toggleForgotMode}
                         sx={{ cursor: "pointer" }}
                       >
@@ -602,15 +682,15 @@ function LoginPage({ setIsLoggedIn }) {
                   onFailure={handleGoogleFailure}
                   cookiePolicy={"single_host_origin"}
                 />
-                {mutationError && (
-                  <Alert severity="error">{mutationError}</Alert>
+                {mutationResponse && (
+                  <Alert severity={mutationState}>{mutationResponse}</Alert>
                 )}
               </Box>
             </Box>
           </Box>
           <Box>
             <Typography
-              variant="haveAccount"
+              variant="clickableText"
               onClick={toggleAuthMode}
               sx={{ cursor: "pointer" }}
             >

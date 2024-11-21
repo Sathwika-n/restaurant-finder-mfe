@@ -15,8 +15,8 @@ const Profile = () => {
     isLoading: isReviewsLoading,
     error: isReviewsError,
   } = useUserReviews(
-    userId
-    // sessionStorage.getItem(JSON.parse(sessionStorage.getItem("user")).user_id)
+    // userId
+    JSON.parse(sessionStorage.getItem("user"))?.user_id
   );
 
   const {
@@ -24,8 +24,8 @@ const Profile = () => {
     isLoading: isFavouritesLoading,
     error: isFavouritesError,
   } = useUserFavourites(
-    userId
-    // sessionStorage.getItem(JSON.parse(sessionStorage.getItem("user")).user_id)
+    // userId
+    JSON.parse(sessionStorage.getItem("user"))?.user_id
   );
 
   // State for the form fields
@@ -102,6 +102,7 @@ const Profile = () => {
                       }
                       rating={restaurant.rating}
                       location={restaurant.location}
+                      restaurant_id={restaurant.id}
                     />
                   </Grid>
                 ))}

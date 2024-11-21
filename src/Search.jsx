@@ -95,6 +95,7 @@ function Search() {
     searchResMutation.mutate({
       location: searchData?.location,
       radius: searchData?.radius,
+      user_id: JSON.parse(sessionStorage.getItem("user"))?.user_id,
     });
   };
   const handleGetCurrentLocation = () => {
@@ -121,49 +122,53 @@ function Search() {
   return (
     <Box className="search-container">
       <Box className="search-form">
-        <Typography variant="subHeading">Start Exploring</Typography>
-        <Box className="fields">
-          <TextField
-            required
-            name="location"
-            type="text"
-            placeholder="Your Location"
-            value={searchData?.location || ""}
-            onChange={handleSearchInputChange}
-            margin="normal"
-          />
-          {isLocationLoading ? (
-            <Loader />
-          ) : (
-            <MyLocationIcon
-              onClick={handleGetCurrentLocation}
-              sx={{ cursor: "pointer" }}
+        <Typography variant="title">Start Exploring</Typography>
+        <Box className="form-data">
+          <Box className="fields">
+            <TextField
+              sx={{ width: "36rem" }}
+              required
+              name="location"
+              type="text"
+              placeholder="Your Location"
+              value={searchData?.location || ""}
+              onChange={handleSearchInputChange}
+              margin="normal"
             />
-          )}
-        </Box>
+            {isLocationLoading ? (
+              <Loader />
+            ) : (
+              <MyLocationIcon
+                onClick={handleGetCurrentLocation}
+                sx={{ cursor: "pointer" }}
+              />
+            )}
+          </Box>
 
-        <Box className="radius">
-          <Slider2
-            value={searchData?.radius} // Bind the state to the slider value
-            onChange={handleSliderChange} // Update state on slider value change
-            defaultValue={50} // Initial value
-            valueLabelDisplay="auto" // Show the value on the slider
-            min={0} // Set min value
-            max={1000} // Set max value
-            aria-label="Slider"
-          />
+          <Box className="radius">
+            <Typography variant="reviewTitle">Radius:</Typography>
+            <Slider2
+              value={searchData?.radius} // Bind the state to the slider value
+              onChange={handleSliderChange} // Update state on slider value change
+              defaultValue={50} // Initial value
+              valueLabelDisplay="auto" // Show the value on the slider
+              min={0} // Set min value
+              max={1000} // Set max value
+              aria-label="Slider"
+            />
+          </Box>
         </Box>
         {isLoading ? (
           <Loader />
         ) : (
-          <Button variant="signUp" onClick={handleSearch}>
+          <Button variant="contained" onClick={handleSearch}>
             Explore
           </Button>
         )}
       </Box>
-      {data?.length > 0 ? (
+      {Array.isArray(data) && data.length > 0 ? (
         <Grid container spacing={2} className="restaurants-list">
-          {data?.map((restaurant, index) => (
+          {data.map((restaurant, index) => (
             <Grid
               item
               size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
@@ -177,12 +182,16 @@ function Search() {
                 }
                 rating={restaurant.rating}
                 location={restaurant.address}
+                restaurant_id={restaurant.id}
+                isFavorite={restaurant.isFavorite}
               />
             </Grid>
           ))}
         </Grid>
       ) : (
-        <Typography variant="haveAccount">No Restaurants Found.</Typography>
+        data && (
+          <Typography variant="haveAccount">No Restaurants Found.</Typography>
+        )
       )}
     </Box>
   );

@@ -12,6 +12,11 @@ const theme = createTheme({
         root: {
           fontFamily: "DM Sans",
         },
+        title: {
+          fontFamily: "Poppins",
+          fontSize: "30px",
+          fontWeight: "600",
+        },
         subHeading: {
           fontSize: "40px",
           fontWeight: "700",
@@ -19,6 +24,17 @@ const theme = createTheme({
         columnHeading: {
           fontSize: "30px",
           fontWeight: "700",
+        },
+        clickableText: {
+          fontFamily: "Poppins",
+          fontWeight: "600",
+          color: "#004687",
+          fontSize: 14,
+        },
+        body: {
+          fontFamily: "DM Sans",
+          fontWeight: "400",
+          font: 16,
         },
         haveAccount: {
           fontSize: "18px",
@@ -69,15 +85,18 @@ const theme = createTheme({
           padding: "2px 16px",
           outline: "none",
         },
-        signUp: {
+        contained: {
           backgroundColor: "#004687",
           color: "white",
-          fontFamily: "DM Sans",
-          fontSize: 15,
-          fontWeight: "500",
+          textTransform: "none",
+          padding: "2px 16px",
+          outline: "none",
+          fontFamily: "Montserrat",
+          fontSize: 14,
+          fontWeight: "600",
+          lineHeight: "0.5",
           borderRadius: "50px",
           height: "40px",
-          width: "118px",
         },
         regular: {
           backgroundColor: "#004687",
@@ -89,9 +108,10 @@ const theme = createTheme({
           height: "40px",
         },
         navItem: {
-          fontFamily: "DM Sans",
-          fontSize: 15,
-          fontWeight: "100",
+          fontFamily: "Inter",
+          fontSize: 16,
+          fontWeight: "600",
+          lineHeight: 0.5,
         },
       },
     },
@@ -136,7 +156,9 @@ const theme = createTheme({
         root: {
           "&.Mui-error": {
             color: "#d32f2f",
-            fontFamily: "DM Sans",
+            fontFamily: "Work Sans",
+            fontSize: 12,
+            lineHeight: 1.4,
           },
         },
       },

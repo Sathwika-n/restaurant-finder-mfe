@@ -33,6 +33,21 @@ export const forgotPassword = async (postData) => {
   return response.data;
 };
 
+export const changePassword = async (postData) => {
+  const response = await api.put("/change-password", postData);
+  return response.data;
+};
+
+export const addFavorite = async (postData) => {
+  const response = await api.post("/maps/add_favorite", postData);
+  return response.data;
+};
+
+export const removeFavorite = async (postData) => {
+  const response = await api.post("/maps/remove_favorite", postData);
+  return response.data;
+};
+
 const fetchUserReviews = async (userId) => {
   const response = await api.get(`/maps/user_reviews_by_user_id`, {
     params: { user_id: userId },

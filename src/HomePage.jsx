@@ -23,7 +23,7 @@ function HomePage() {
       <Box
         id="about"
         className="section"
-        style={{ backgroundColor: "#A0E77D" }}
+        // style={{ backgroundColor: "#A0E77D" }}
       >
         <Box className="content">
           <AboutUs />
@@ -32,7 +32,7 @@ function HomePage() {
       <Box
         id="contactus"
         className="section"
-        style={{ backgroundColor: "#ef8677" }}
+        // style={{ backgroundColor: "#ef8677" }}
       >
         <Box className="content">
           <ContactUs />

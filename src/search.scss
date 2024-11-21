@@ -6,38 +6,36 @@
 }
 
 .search-container {
-  // padding: 20px;
-  // margin: 0 auto;
-  // max-width: 1376px; /* Maximum width for larger screens */
-  // width: 100%;
-  background: #ecffc1;
-  background: -webkit-linear-gradient(
-    0deg,
-    #ecffc1 0%,
-    #ffe6cc 50%,
-    #dfbaf7 100%
-  );
-  background: linear-gradient(0deg, #ecffc1 0%, #ffe6cc 50%, #dfbaf7 100%);
+  margin-top: 48px;
   width: 100vw;
   // height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2rem;
   .search-form {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    .fields {
+    .form-data {
       display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    .radius {
-      width: 100%;
-      max-width: 400px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2rem;
+      .fields {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .radius {
+        display: flex;
+        gap: 2rem;
+        width: 100%;
+        // max-width: 400px;
+      }
     }
   }
   .restaurants-list {
@@ -75,7 +73,7 @@
 .slick-prev:before,
 .slick-next:before {
   font-size: 30px;
-  color: #000; /* Customize color of arrows */
+  color: #000000; /* Customize color of arrows */
 }
 
 /* Responsive adjustments */

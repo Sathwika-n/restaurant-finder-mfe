@@ -156,8 +156,11 @@ function Navbar({ window, onLogout }) {
           position="fixed"
           component="nav"
           sx={{
-            backgroundColor: "transparent", //getNavBackground(),
-            zIndex: 1300, // Ensure navbar is on top
+            background: "rgba(255, 255, 255, 0)", // Transparent background
+            WebkitBackdropFilter: "blur(4px)", // Correct property for WebKit browsers
+            backdropFilter: "blur(4px)", // Blur effect for supported browsers
+            border: "1px solid rgba(255, 255, 255, 0)", // Transparent border
+            zIndex: 1300, // Ensure navbar is on top of other elements
           }}
           className="appbar"
         >
@@ -192,6 +195,7 @@ function Navbar({ window, onLogout }) {
                 <Button
                   key={item}
                   disableRipple
+                  variant="navItem"
                   sx={{
                     color: "#050b20",
                     textDecoration: "none",
@@ -201,7 +205,7 @@ function Navbar({ window, onLogout }) {
                     "&:after": {
                       content: '""',
                       position: "absolute",
-                      bottom: 0,
+                      bottom: "-6px",
                       left: "10%",
                       width: item === activeItem ? "80%" : "0%",
                       height: "2px",
@@ -222,6 +226,7 @@ function Navbar({ window, onLogout }) {
                 </Button>
               ))}
               <Button
+                variant="navItem"
                 disableRipple
                 sx={{
                   color: "#000",
