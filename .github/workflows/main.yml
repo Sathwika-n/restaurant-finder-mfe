@@ -48,7 +48,3 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           package: ./dist # Update this to ./dist for Vite projects
           publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
-
-      # Azure logout (optional for security)
-      - name: Azure Logout
-        run: az logout
