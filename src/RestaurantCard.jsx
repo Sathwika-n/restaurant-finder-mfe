@@ -82,7 +82,10 @@ const RestaurantCard = ({
       <img src={imageUrl} alt={`${name}`} className="restaurant-image" />
 
       <IconButton
-        onClick={handleFavoriteToggle}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleFavoriteToggle();
+        }}
         sx={{
           position: "absolute",
           top: "16px",
